@@ -63,3 +63,17 @@ def classificar_perfil_credito(rating):
             classificacao="Negativo",
             justificativa="Risco elevado para concessão de crédito"
         )
+
+class ParecerCredito:
+    def __init__(self, analista, conclusao, observacoes):
+        self.analista = analista
+        self.conclusao = conclusao
+        self.observacoes = observacoes
+
+
+class PropostaCredito:
+    def __init__(self, valor, prazo_meses, taxa_juros, garantias):
+        self.valor = valor
+        self.prazo_meses = prazo_meses
+        self.taxa_juros = taxa_juros
+        self.garantias = garantias
