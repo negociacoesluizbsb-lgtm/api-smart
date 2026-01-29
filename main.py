@@ -123,38 +123,54 @@ def relatorio_credito_html():
         "condicoes": "Manutenção das garantias e covenants financeiros"
     }
 
-    # HTML estruturado
+    # Definir cor do rating
+    cores_rating = {"A": "#4CAF50", "B": "#FFC107", "C": "#FF9800", "D": "#F44336"}
+    cor = cores_rating.get(rating["nota"], "#888")  # cinza padrão
+
     html = f"""
-    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin:auto; padding:20px;">
         <h1 style="text-align:center; color:#2F4F4F;">Relatório de Crédito Empresarial</h1>
         <hr>
-        <h2>{empresa}</h2>
-        <p><strong>Setor:</strong> {setor}</p>
-        <p><strong>Capacidade de Endividamento:</strong> R$ {capacidade}</p>
 
-        <h3>Rating</h3>
-        <p><strong>Nota:</strong> {rating['nota']}<br>
-           <strong>Justificativa:</strong> {rating['justificativa']}</p>
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h2>{empresa}</h2>
+            <p><strong>Setor:</strong> {setor}</p>
+            <p><strong>Capacidade de Endividamento:</strong> R$ {capacidade}</p>
+            <div style="background:#eee; border-radius:8px; overflow:hidden; height:20px; margin-top:5px;">
+                <div style="width:{min(capacidade/10000,100)}%; background:#4CAF50; height:100%;"></div>
+            </div>
+        </div>
 
-        <h3>Perfil de Crédito</h3>
-        <p><strong>Classificação:</strong> {perfil_credito['classificacao']}<br>
-           <strong>Justificativa:</strong> {perfil_credito['justificativa']}</p>
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h3 style="color:{cor};">Rating: {rating['nota']}</h3>
+            <p>{rating['justificativa']}</p>
+        </div>
 
-        <h3>Parecer Técnico</h3>
-        <p><strong>Conclusão:</strong> {parecer['conclusao']}<br>
-           <strong>Observações:</strong> {parecer['observacoes']}</p>
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h3>Perfil de Crédito: {perfil_credito['classificacao']}</h3>
+            <p>{perfil_credito['justificativa']}</p>
+        </div>
 
-        <h3>Proposta de Crédito</h3>
-        <p><strong>Valor:</strong> R$ {proposta['valor']}<br>
-           <strong>Prazo:</strong> {proposta['prazo_meses']} meses<br>
-           <strong>Taxa de Juros:</strong> {proposta['taxa_juros']}%<br>
-           <strong>Garantias:</strong> {proposta['garantias']}</p>
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h3>Parecer Técnico</h3>
+            <p><strong>Conclusão:</strong> {parecer['conclusao']}<br>
+               <strong>Observações:</strong> {parecer['observacoes']}</p>
+        </div>
 
-        <h3>Decisão</h3>
-        <p><strong>Status:</strong> {decisao['status']}<br>
-           <strong>Condições:</strong> {decisao['condicoes']}</p>
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h3>Proposta de Crédito</h3>
+            <p><strong>Valor:</strong> R$ {proposta['valor']}<br>
+               <strong>Prazo:</strong> {proposta['prazo_meses']} meses<br>
+               <strong>Taxa de Juros:</strong> {proposta['taxa_juros']}%<br>
+               <strong>Garantias:</strong> {proposta['garantias']}</p>
+        </div>
+
+        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+            <h3>Decisão</h3>
+            <p><strong>Status:</strong> {decisao['status']}<br>
+               <strong>Condições:</strong> {decisao['condicoes']}</p>
+        </div>
     </div>
     """
 
     return HTMLResponse(content=html)
-
