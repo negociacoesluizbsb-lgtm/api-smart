@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao, RelatorioCredito
+from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao
+from models import RelatorioCredito
+
 
 
 app = FastAPI(
@@ -127,4 +129,5 @@ def relatorio_credito_final():
     )
 
     return relatorio.__dict__
+
 
