@@ -86,3 +86,24 @@ class RegistroDecisao:
         self.acao = acao
         self.justificativa = justificativa
         self.data_hora = datetime.utcnow()
+
+class RelatorioCredito:
+    def __init__(
+        self,
+        empresa,
+        setor,
+        capacidade_endividamento,
+        rating,
+        perfil_credito,
+        parecer,
+        proposta,
+        decisao
+    ):
+        self.empresa = empresa
+        self.setor = setor
+        self.capacidade_endividamento = capacidade_endividamento
+        self.rating = rating
+        self.perfil_credito = perfil_credito
+        self.parecer = parecer
+        self.proposta = proposta
+        self.decisao = decisao
