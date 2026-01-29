@@ -2,70 +2,21 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Relatório de Crédito Empresarial</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-            background-color: #f8f8f8;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        p {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-        .section {
-            background-color: #fff;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+    <title>Plataforma de Crédito Empresarial</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Relatório de Crédito Empresarial</h1>
+    <header>
+        <h1>Plataforma de Crédito Empresarial</h1>
+    </header>
 
-    <div class="section">
-        <h2>Empresa</h2>
-        <p><strong>Nome:</strong> {{ empresa }}</p>
-        <p><strong>Setor:</strong> {{ setor }}</p>
-        <p><strong>Capacidade de Endividamento:</strong> {{ capacidade_endividamento }}</p>
-    </div>
+    <main>
+        <button id="carregarRelatorio">Carregar Relatório</button>
+        <div id="relatorioContainer">
+            <!-- O relatório será carregado aqui -->
+        </div>
+    </main>
 
-    <div class="section">
-        <h2>Rating</h2>
-        <p><strong>Nota:</strong> {{ rating.nota }}</p>
-        <p><strong>Justificativa:</strong> {{ rating.justificativa }}</p>
-    </div>
-
-    <div class="section">
-        <h2>Perfil de Crédito</h2>
-        <p><strong>Classificação:</strong> {{ perfil_credito.classificacao }}</p>
-        <p><strong>Justificativa:</strong> {{ perfil_credito.justificativa }}</p>
-    </div>
-
-    <div class="section">
-        <h2>Parecer</h2>
-        <p><strong>Conclusão:</strong> {{ parecer.conclusao }}</p>
-        <p><strong>Observações:</strong> {{ parecer.observacoes }}</p>
-    </div>
-
-    <div class="section">
-        <h2>Proposta de Crédito</h2>
-        <p><strong>Valor:</strong> {{ proposta.valor }}</p>
-        <p><strong>Prazo (meses):</strong> {{ proposta.prazo_meses }}</p>
-        <p><strong>Taxa de Juros (%):</strong> {{ proposta.taxa_juros }}</p>
-        <p><strong>Garantias:</strong> {{ proposta.garantias }}</p>
-    </div>
-
-    <div class="section">
-        <h2>Decisão</h2>
-        <p><strong>Status:</strong> {{ decisao.status }}</p>
-        <p><strong>Condições:</strong> {{ decisao.condicoes }}</p>
-    </div>
+    <script src="script.js"></script>
 </body>
 </html>
-
