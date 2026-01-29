@@ -132,5 +132,27 @@ def relatorio_credito_final():
 
     return relatorio.__dict__
 
+from fastapi.responses import FileResponse
+from jinja2 import Environment, FileSystemLoader
+import pdfkit
+
+@app.get("/relatorio/credito-pdf")
+def relatorio_credito_pdf():
+    # Pega dados do relatório final
+    relatorio = relatorio_credito_final()
+
+    # Configura template
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template('relatorio.html')
+
+    # Renderiza HTML
+    html_out = template.render(**relatorio)
+
+    # Cria PDF temporário
+    pdf_path = "relatorio_credito.pdf"
+    pdfkit.from_string(html_out, pdf_path)
+
+    # Retorna PDF
+    return FileResponse(pdf_path, media_type='application/pdf', filename='relatorio_credito.pdf')
 
 
