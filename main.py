@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from models import Empresa, InstituicaoFinanceira, AnaliseCredito
+from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito
+
 
 app = FastAPI(
     title="Plataforma de Análise Financeira e Crédito Empresarial",
@@ -37,4 +38,33 @@ def analise_exemplo():
         "justificativa_rating": rating.justificativa,
         "perfil_credito": perfil.classificacao,
         "justificativa_perfil": perfil.justificativa
+    }
+
+@app.get("/credito/parecer-e-proposta")
+def parecer_e_proposta():
+    parecer = ParecerCredito(
+        analista="Instituição Financeira Exemplo",
+        conclusao="Aprovado com ressalvas",
+        observacoes="Empresa com boa capacidade de pagamento, porém dependente de capital de giro"
+    )
+
+    proposta = PropostaCredito(
+        valor=500000,
+        prazo_meses=36,
+        taxa_juros=1.5,
+        garantias="Alienação fiduciária de recebíveis"
+    )
+
+    return {
+        "parecer_tecnico": {
+            "analista": parecer.analista,
+            "conclusao": parecer.conclusao,
+            "observacoes": parecer.observacoes
+        },
+        "proposta_credito": {
+            "valor": proposta.valor,
+            "prazo_meses": proposta.prazo_meses,
+            "taxa_juros": proposta.taxa_juros,
+            "garantias": proposta.garantias
+        }
     }
