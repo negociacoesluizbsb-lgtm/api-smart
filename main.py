@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Empresa, ParecerCredito, PropostaCredito, RegistroDecisao
+from fastapi.responses import HTMLResponse
+
 
 app = FastAPI(
     title="Plataforma de Análise Financeira e Crédito Empresarial",
@@ -94,9 +96,8 @@ def registro_decisao_exemplo():
     }
 
 # 🔹 Endpoint seguro do relatório HTML
-@app.get("/relatorio/credito-html")
+@app.get("/relatorio/credito-html", response_class=HTMLResponse)
 def relatorio_credito_html():
-    # Dados fixos de exemplo (evita Internal Server Error)
     empresa = "Empresa Exemplo Ltda"
     setor = "Indústria"
     capacidade = 750000
@@ -121,7 +122,6 @@ def relatorio_credito_html():
         "condicoes": "Manutenção das garantias e covenants financeiros"
     }
 
-    # HTML simples
     html = f"""
     <h2>Relatório de Crédito - {empresa}</h2>
     <p><strong>Setor:</strong> {setor}</p>
@@ -132,5 +132,6 @@ def relatorio_credito_html():
     <p><strong>Proposta:</strong> R$ {proposta['valor']} | {proposta['prazo_meses']} meses | Juros {proposta['taxa_juros']}% | Garantias: {proposta['garantias']}</p>
     <p><strong>Decisão:</strong> {decisao['status']} | {decisao['condicoes']}</p>
     """
-    return html
 
+    # Retornar HTML de forma que o navegador renderize corretamente
+    return HTMLResponse(content=html)
