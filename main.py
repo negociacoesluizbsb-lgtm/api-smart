@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao
+from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao, RelatorioCredito
 
 
 app = FastAPI(
@@ -83,3 +83,48 @@ def registro_decisao_exemplo():
         "justificativa": registro.justificativa,
         "data_hora": registro.data_hora
     }
+    @app.get("/relatorio/credito-final")
+def relatorio_credito_final():
+    empresa = "Empresa Exemplo Ltda"
+    setor = "Indústria"
+    capacidade = 750000
+
+    rating = calcular_rating(capacidade)
+    perfil = classificar_perfil_credito(rating)
+
+    parecer = {
+        "conclusao": "Aprovado com ressalvas",
+        "observacoes": "Boa capacidade financeira, dependência moderada de capital de giro"
+    }
+
+    proposta = {
+        "valor": 500000,
+        "prazo_meses": 36,
+        "taxa_juros": 1.5,
+        "garantias": "Alienação fiduciária de recebíveis"
+    }
+
+    decisao = {
+        "status": "Aprovado",
+        "condicoes": "Manutenção das garantias e covenants financeiros"
+    }
+
+    relatorio = RelatorioCredito(
+        empresa=empresa,
+        setor=setor,
+        capacidade_endividamento=capacidade,
+        rating={
+            "nota": rating.nota,
+            "justificativa": rating.justificativa
+        },
+        perfil_credito={
+            "classificacao": perfil.classificacao,
+            "justificativa": perfil.justificativa
+        },
+        parecer=parecer,
+        proposta=proposta,
+        decisao=decisao
+    )
+
+    return relatorio.__dict__
+
