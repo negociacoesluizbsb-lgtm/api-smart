@@ -1,13 +1,20 @@
 from fastapi import FastAPI
-from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao
-from models import RelatorioCredito
-
-
+from fastapi.responses import HTMLResponse
+from models import (
+    Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito,
+    RegistroDecisao, RelatorioCredito, calcular_rating, classificar_perfil_credito
+)
+from jinja2 import Environment, FileSystemLoader
+import os
 
 app = FastAPI(
     title="Plataforma de Análise Financeira e Crédito Empresarial",
     description="Sistema para análise de crédito, risco e capacidade de endividamento"
 )
+
+# ----------------------------
+# Endpoints principais
+# ----------------------------
 
 @app.get("/")
 def home():
@@ -15,9 +22,6 @@ def home():
         "status": "online",
         "mensagem": "Plataforma de Crédito Empresarial ativa"
     }
-
-
-from models import calcular_rating, classificar_perfil_credito
 
 @app.get("/analise/exemplo")
 def analise_exemplo():
@@ -86,6 +90,9 @@ def registro_decisao_exemplo():
         "data_hora": registro.data_hora
     }
 
+# ----------------------------
+# Relatório JSON
+# ----------------------------
 
 @app.get("/relatorio/credito-final")
 def relatorio_credito_final():
@@ -132,44 +139,19 @@ def relatorio_credito_final():
 
     return relatorio.__dict__
 
-from fastapi.responses import FileResponse
-from jinja2 import Environment, FileSystemLoader
-import pdfkit
-
-@app.get("/relatorio/credito-pdf")
-def relatorio_credito_pdf():
-    # Pega dados do relatório final
-    relatorio = relatorio_credito_final()
-
-    # Configura template
-    env = Environment(loader=FileSystemLoader('templates'))
-    template = env.get_template('relatorio.html')
-
-    # Renderiza HTML
-    html_out = template.render(**relatorio)
-
-    # Cria PDF temporário
-    pdf_path = "relatorio_credito.pdf"
-    pdfkit.from_string(html_out, pdf_path)
-
-    # Retorna PDF
-    return FileResponse(pdf_path, media_type='application/pdf', filename='relatorio_credito.pdf')
-
-from fastapi.responses import HTMLResponse
-from jinja2 import Environment, FileSystemLoader
+# ----------------------------
+# Relatório HTML
+# ----------------------------
 
 @app.get("/relatorio/credito-html", response_class=HTMLResponse)
 def relatorio_credito_html():
-    # Pega dados do relatório final
     relatorio = relatorio_credito_final()
 
-    # Configura template
-    env = Environment(loader=FileSystemLoader('templates'))
+    # Ajusta caminho para o Railway
+    templates_path = os.path.join(os.path.dirname(__file__), 'templates')
+    env = Environment(loader=FileSystemLoader(templates_path))
     template = env.get_template('relatorio.html')
 
-    # Renderiza HTML
     html_out = template.render(**relatorio)
 
-    # Retorna HTML direto no navegador
     return HTMLResponse(content=html_out)
-
