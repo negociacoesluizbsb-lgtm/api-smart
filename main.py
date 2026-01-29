@@ -1,22 +1,21 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from models import Empresa, ParecerCredito, PropostaCredito, RegistroDecisao
 from fastapi.responses import HTMLResponse
+from models import Empresa, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao
+from models import calcular_rating, classificar_perfil_credito
+import os
+import uvicorn
 
-
+# ------------------------------
+# Inicialização do FastAPI
+# ------------------------------
 app = FastAPI(
     title="Plataforma de Análise Financeira e Crédito Empresarial",
     description="Sistema para análise de crédito, risco e capacidade de endividamento"
 )
 
-# Permitir que o frontend web acesse a API
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Para produção, coloque apenas seu domínio
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
+# ------------------------------
+# Endpoint raiz
+# ------------------------------
 @app.get("/")
 def home():
     return {
@@ -24,32 +23,29 @@ def home():
         "mensagem": "Plataforma de Crédito Empresarial ativa"
     }
 
-# Endpoint de análise de exemplo
+# ------------------------------
+# Endpoint de exemplo de análise
+# ------------------------------
 @app.get("/analise/exemplo")
 def analise_exemplo():
-    empresa = Empresa(
-        nome="Empresa Exemplo Ltda",
-        cnpj="00.000.000/0001-00",
-        setor="Indústria"
-    )
-
+    empresa = Empresa(nome="Empresa Exemplo Ltda", cnpj="00.000.000/0001-00", setor="Indústria")
     capacidade = 750000
-
-    # Exemplo simplificado
-    rating = {"nota": "B", "justificativa": "Boa capacidade de crédito, com risco controlado"}
-    perfil = {"classificacao": "Positivo", "justificativa": "Empresa com perfil adequado para concessão de crédito"}
+    rating = calcular_rating(capacidade)
+    perfil = classificar_perfil_credito(rating)
 
     return {
         "empresa": empresa.nome,
         "setor": empresa.setor,
         "capacidade_endividamento": capacidade,
-        "rating_credito": rating["nota"],
-        "justificativa_rating": rating["justificativa"],
-        "perfil_credito": perfil["classificacao"],
-        "justificativa_perfil": perfil["justificativa"]
+        "rating_credito": rating.nota,
+        "justificativa_rating": rating.justificativa,
+        "perfil_credito": perfil.classificacao,
+        "justificativa_perfil": perfil.justificativa
     }
 
-# Endpoint parecer e proposta
+# ------------------------------
+# Endpoint de parecer e proposta
+# ------------------------------
 @app.get("/credito/parecer-e-proposta")
 def parecer_e_proposta():
     parecer = ParecerCredito(
@@ -79,7 +75,9 @@ def parecer_e_proposta():
         }
     }
 
-# Endpoint registro de decisão
+# ------------------------------
+# Endpoint de registro de decisão
+# ------------------------------
 @app.get("/governanca/registro-decisao")
 def registro_decisao_exemplo():
     registro = RegistroDecisao(
@@ -95,17 +93,16 @@ def registro_decisao_exemplo():
         "data_hora": registro.data_hora
     }
 
-# 🔹 Endpoint seguro do relatório HTML
-
-from fastapi.responses import HTMLResponse
-
+# ------------------------------
+# Endpoint de relatório HTML profissional
+# ------------------------------
 @app.get("/relatorio/credito-html", response_class=HTMLResponse)
 def relatorio_credito_html():
     # Dados da empresa
     empresa = "Empresa Exemplo Ltda"
     setor = "Indústria"
     capacidade = 750000
-    limite_maximo = 1000000  # limite para barra de progresso
+    limite_maximo = 1000000
 
     # Rating e perfil
     rating = {"nota": "B", "justificativa": "Boa capacidade de crédito, com risco controlado"}
@@ -138,9 +135,9 @@ def relatorio_credito_html():
     # Percentual da barra de progresso
     percentual = min(capacidade / limite_maximo * 100, 100)
 
+    # HTML do relatório
     html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 900px; margin:auto; padding:20px;">
-
         <h1 style="text-align:center; color:#2F4F4F;">Relatório de Crédito Empresarial</h1>
         <hr>
 
@@ -178,4 +175,59 @@ def relatorio_credito_html():
             <table style="width:100%; border-collapse: collapse;">
                 <tr>
                     <th style="border-bottom:1px solid #ccc; text-align:left;">Valor</th>
-                    <th style="
+                    <th style="border-bottom:1px solid #ccc; text-align:left;">Prazo</th>
+                    <th style="border-bottom:1px solid #ccc; text-align:left;">Juros</th>
+                    <th style="border-bottom:1px solid #ccc; text-align:left;">Garantias</th>
+                </tr>
+                <tr>
+                    <td>R$ {proposta['valor']}</td>
+                    <td>{proposta['prazo_meses']} meses</td>
+                    <td>{proposta['taxa_juros']}%</td>
+                    <td>{proposta['garantias']}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Card Decisão -->
+        <div style="border:1px solid #ccc; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:2px 2px 8px rgba(0,0,0,0.1);">
+            <h3>Decisão</h3>
+            <p><strong>Status:</strong> {decisao['status']}<br>
+               <strong>Condições:</strong> {decisao['condicoes']}</p>
+        </div>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('graficoPerfil').getContext('2d');
+        const graficoPerfil = new Chart(ctx, {{
+            type: 'pie',
+            data: {{
+                labels: ['Positivo', 'Negativo'],
+                datasets: [{{
+                    data: [{1 if perfil_credito['classificacao']=='Positivo' else 0}, {1 if perfil_credito['classificacao']=='Negativo' else 0}],
+                    backgroundColor: ['#4CAF50', '#F44336']
+                }}]
+            }},
+            options: {{
+                plugins: {{
+                    legend: {{ position: 'bottom' }},
+                    title: {{
+                        display: true,
+                        text: 'Distribuição do Perfil de Crédito'
+                    }}
+                }}
+            }}
+        }});
+    </script>
+    """
+
+    return HTMLResponse(content=html)
+
+
+# ------------------------------
+# Inicialização do Uvicorn
+# ------------------------------
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))  # PORT obrigatório no Railway
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
