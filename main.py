@@ -85,7 +85,9 @@ def registro_decisao_exemplo():
         "justificativa": registro.justificativa,
         "data_hora": registro.data_hora
     }
-    @app.get("/relatorio/credito-final")
+
+
+@app.get("/relatorio/credito-final")
 def relatorio_credito_final():
     empresa = "Empresa Exemplo Ltda"
     setor = "Indústria"
@@ -129,5 +131,6 @@ def relatorio_credito_final():
     )
 
     return relatorio.__dict__
+
 
 
