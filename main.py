@@ -155,4 +155,21 @@ def relatorio_credito_pdf():
     # Retorna PDF
     return FileResponse(pdf_path, media_type='application/pdf', filename='relatorio_credito.pdf')
 
+from fastapi.responses import HTMLResponse
+from jinja2 import Environment, FileSystemLoader
+
+@app.get("/relatorio/credito-html", response_class=HTMLResponse)
+def relatorio_credito_html():
+    # Pega dados do relatório final
+    relatorio = relatorio_credito_final()
+
+    # Configura template
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template('relatorio.html')
+
+    # Renderiza HTML
+    html_out = template.render(**relatorio)
+
+    # Retorna HTML direto no navegador
+    return HTMLResponse(content=html_out)
 
