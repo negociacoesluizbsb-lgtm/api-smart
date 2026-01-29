@@ -96,6 +96,7 @@ def registro_decisao_exemplo():
     }
 
 # 🔹 Endpoint seguro do relatório HTML
+
 @app.get("/relatorio/credito-html", response_class=HTMLResponse)
 def relatorio_credito_html():
     empresa = "Empresa Exemplo Ltda"
@@ -122,16 +123,38 @@ def relatorio_credito_html():
         "condicoes": "Manutenção das garantias e covenants financeiros"
     }
 
+    # HTML estruturado
     html = f"""
-    <h2>Relatório de Crédito - {empresa}</h2>
-    <p><strong>Setor:</strong> {setor}</p>
-    <p><strong>Capacidade de Endividamento:</strong> R$ {capacidade}</p>
-    <p><strong>Rating:</strong> {rating['nota']} - {rating['justificativa']}</p>
-    <p><strong>Perfil de Crédito:</strong> {perfil_credito['classificacao']} - {perfil_credito['justificativa']}</p>
-    <p><strong>Parecer:</strong> {parecer['conclusao']} - {parecer['observacoes']}</p>
-    <p><strong>Proposta:</strong> R$ {proposta['valor']} | {proposta['prazo_meses']} meses | Juros {proposta['taxa_juros']}% | Garantias: {proposta['garantias']}</p>
-    <p><strong>Decisão:</strong> {decisao['status']} | {decisao['condicoes']}</p>
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+        <h1 style="text-align:center; color:#2F4F4F;">Relatório de Crédito Empresarial</h1>
+        <hr>
+        <h2>{empresa}</h2>
+        <p><strong>Setor:</strong> {setor}</p>
+        <p><strong>Capacidade de Endividamento:</strong> R$ {capacidade}</p>
+
+        <h3>Rating</h3>
+        <p><strong>Nota:</strong> {rating['nota']}<br>
+           <strong>Justificativa:</strong> {rating['justificativa']}</p>
+
+        <h3>Perfil de Crédito</h3>
+        <p><strong>Classificação:</strong> {perfil_credito['classificacao']}<br>
+           <strong>Justificativa:</strong> {perfil_credito['justificativa']}</p>
+
+        <h3>Parecer Técnico</h3>
+        <p><strong>Conclusão:</strong> {parecer['conclusao']}<br>
+           <strong>Observações:</strong> {parecer['observacoes']}</p>
+
+        <h3>Proposta de Crédito</h3>
+        <p><strong>Valor:</strong> R$ {proposta['valor']}<br>
+           <strong>Prazo:</strong> {proposta['prazo_meses']} meses<br>
+           <strong>Taxa de Juros:</strong> {proposta['taxa_juros']}%<br>
+           <strong>Garantias:</strong> {proposta['garantias']}</p>
+
+        <h3>Decisão</h3>
+        <p><strong>Status:</strong> {decisao['status']}<br>
+           <strong>Condições:</strong> {decisao['condicoes']}</p>
+    </div>
     """
 
-    # Retornar HTML de forma que o navegador renderize corretamente
     return HTMLResponse(content=html)
+
