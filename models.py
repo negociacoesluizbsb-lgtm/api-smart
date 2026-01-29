@@ -77,3 +77,12 @@ class PropostaCredito:
         self.prazo_meses = prazo_meses
         self.taxa_juros = taxa_juros
         self.garantias = garantias
+
+from datetime import datetime
+
+class RegistroDecisao:
+    def __init__(self, usuario, acao, justificativa):
+        self.usuario = usuario
+        self.acao = acao
+        self.justificativa = justificativa
+        self.data_hora = datetime.utcnow()
