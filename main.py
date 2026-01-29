@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito
+from models import Empresa, InstituicaoFinanceira, AnaliseCredito, ParecerCredito, PropostaCredito, RegistroDecisao
 
 
 app = FastAPI(
@@ -67,4 +67,19 @@ def parecer_e_proposta():
             "taxa_juros": proposta.taxa_juros,
             "garantias": proposta.garantias
         }
+    }
+
+@app.get("/governanca/registro-decisao")
+def registro_decisao_exemplo():
+    registro = RegistroDecisao(
+        usuario="Analista Crédito Banco X",
+        acao="Aprovação com condições",
+        justificativa="Rating B, perfil positivo e garantias adequadas"
+    )
+
+    return {
+        "usuario": registro.usuario,
+        "acao": registro.acao,
+        "justificativa": registro.justificativa,
+        "data_hora": registro.data_hora
     }
