@@ -97,21 +97,27 @@ def registro_decisao_exemplo():
 
 # 🔹 Endpoint seguro do relatório HTML
 
+from fastapi.responses import HTMLResponse
+
 @app.get("/relatorio/credito-html", response_class=HTMLResponse)
 def relatorio_credito_html():
+    # Dados da empresa
     empresa = "Empresa Exemplo Ltda"
     setor = "Indústria"
     capacidade = 750000
-    limite_maximo = 1000000  # para o gráfico de barra
+    limite_maximo = 1000000  # limite para barra de progresso
 
+    # Rating e perfil
     rating = {"nota": "B", "justificativa": "Boa capacidade de crédito, com risco controlado"}
     perfil_credito = {"classificacao": "Positivo", "justificativa": "Empresa com perfil adequado para concessão de crédito"}
 
+    # Parecer técnico
     parecer = {
         "conclusao": "Aprovado com ressalvas",
         "observacoes": "Boa capacidade financeira, dependência moderada de capital de giro"
     }
 
+    # Proposta de crédito
     proposta = {
         "valor": 500000,
         "prazo_meses": 36,
@@ -119,120 +125,57 @@ def relatorio_credito_html():
         "garantias": "Alienação fiduciária de recebíveis"
     }
 
+    # Decisão
     decisao = {
         "status": "Aprovado",
         "condicoes": "Manutenção das garantias e covenants financeiros"
     }
 
+    # Cores por rating
     cores_rating = {"A": "#4CAF50", "B": "#FFC107", "C": "#FF9800", "D": "#F44336"}
-    cor = cores_rating.get(rating["nota"], "#888")
+    cor_rating = cores_rating.get(rating["nota"], "#888")
 
-    # HTML completo com gráficos Chart.js
+    # Percentual da barra de progresso
+    percentual = min(capacidade / limite_maximo * 100, 100)
+
     html = f"""
-    <div style="font-family: Arial, sans-serif; max-width: 800px; margin:auto; padding:20px;">
+    <div style="font-family: Arial, sans-serif; max-width: 900px; margin:auto; padding:20px;">
+
         <h1 style="text-align:center; color:#2F4F4F;">Relatório de Crédito Empresarial</h1>
         <hr>
 
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+        <!-- Card Empresa -->
+        <div style="border:1px solid #ccc; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:2px 2px 8px rgba(0,0,0,0.1);">
             <h2>{empresa}</h2>
             <p><strong>Setor:</strong> {setor}</p>
             <p><strong>Capacidade de Endividamento:</strong> R$ {capacidade}</p>
+            <div style="background:#eee; border-radius:10px; overflow:hidden; height:25px; margin-top:5px;">
+                <div style="width:{percentual}%; background:{cor_rating}; height:100%; text-align:center; color:#000; line-height:25px;">
+                    {percentual:.1f}%
+                </div>
+            </div>
         </div>
 
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
-            <h3 style="color:{cor};">Rating: {rating['nota']}</h3>
+        <!-- Card Rating e Perfil -->
+        <div style="border:1px solid #ccc; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:2px 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="color:{cor_rating};">Rating: {rating['nota']}</h3>
             <p>{rating['justificativa']}</p>
             <h4>Perfil de Crédito: {perfil_credito['classificacao']}</h4>
             <p>{perfil_credito['justificativa']}</p>
-
-            <!-- Gráfico de Pizza -->
-            <canvas id="graficoRating" width="400" height="200"></canvas>
+            <canvas id="graficoPerfil" width="400" height="200"></canvas>
         </div>
 
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
-            <h3>Capacidade de Endividamento</h3>
-            <canvas id="graficoBarra" width="400" height="100"></canvas>
-        </div>
-
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+        <!-- Card Parecer Técnico -->
+        <div style="border:1px solid #ccc; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:2px 2px 8px rgba(0,0,0,0.1);">
             <h3>Parecer Técnico</h3>
             <p><strong>Conclusão:</strong> {parecer['conclusao']}<br>
                <strong>Observações:</strong> {parecer['observacoes']}</p>
         </div>
 
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
+        <!-- Card Proposta -->
+        <div style="border:1px solid #ccc; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:2px 2px 8px rgba(0,0,0,0.1);">
             <h3>Proposta de Crédito</h3>
-            <p><strong>Valor:</strong> R$ {proposta['valor']}<br>
-               <strong>Prazo:</strong> {proposta['prazo_meses']} meses<br>
-               <strong>Taxa de Juros:</strong> {proposta['taxa_juros']}%<br>
-               <strong>Garantias:</strong> {proposta['garantias']}</p>
-        </div>
-
-        <div style="border:1px solid #ccc; border-radius:8px; padding:15px; margin-bottom:10px; box-shadow:2px 2px 6px rgba(0,0,0,0.1);">
-            <h3>Decisão</h3>
-            <p><strong>Status:</strong> {decisao['status']}<br>
-               <strong>Condições:</strong> {decisao['condicoes']}</p>
-        </div>
-    </div>
-
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Gráfico de Pizza - Rating / Perfil
-        const ctx1 = document.getElementById('graficoRating').getContext('2d');
-        const graficoRating = new Chart(ctx1, {{
-            type: 'pie',
-            data: {{
-                labels: ['Positivo', 'Negativo'],
-                datasets: [{{
-                    data: [perfil_credito['classificacao'] === 'Positivo' ? 1 : 0, perfil_credito['classificacao'] === 'Negativo' ? 1 : 0],
-                    backgroundColor: ['#4CAF50', '#F44336'],
-                }}]
-            }},
-            options: {{
-                plugins: {{
-                    legend: {{
-                        position: 'bottom'
-                    }},
-                    title: {{
-                        display: true,
-                        text: 'Perfil de Crédito'
-                    }}
-                }}
-            }}
-        }});
-
-        // Gráfico de Barra - Capacidade de Endividamento
-        const ctx2 = document.getElementById('graficoBarra').getContext('2d');
-        const graficoBarra = new Chart(ctx2, {{
-            type: 'bar',
-            data: {{
-                labels: ['Capacidade'],
-                datasets: [{{
-                    label: 'R$',
-                    data: [{capacidade}],
-                    backgroundColor: ['#2196F3']
-                }}]
-            }},
-            options: {{
-                indexAxis: 'y',
-                scales: {{
-                    x: {{
-                        max: {limite_maximo}
-                    }}
-                }},
-                plugins: {{
-                    legend: {{
-                        display: false
-                    }},
-                    title: {{
-                        display: true,
-                        text: 'Capacidade de Endividamento vs Limite Máximo'
-                    }}
-                }}
-            }}
-        }});
-    </script>
-    """
-
-    return HTMLResponse(content=html)
+            <table style="width:100%; border-collapse: collapse;">
+                <tr>
+                    <th style="border-bottom:1px solid #ccc; text-align:left;">Valor</th>
+                    <th style="
