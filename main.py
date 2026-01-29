@@ -14,6 +14,8 @@ def home():
     }
 
 
+from models import calcular_rating, classificar_perfil_credito
+
 @app.get("/analise/exemplo")
 def analise_exemplo():
     empresa = Empresa(
@@ -22,15 +24,17 @@ def analise_exemplo():
         setor="Indústria"
     )
 
-    analise = AnaliseCredito(
-        empresa=empresa.nome,
-        rating="B",
-        capacidade_endividamento=750000
-    )
+    capacidade = 750000
+
+    rating = calcular_rating(capacidade)
+    perfil = classificar_perfil_credito(rating)
 
     return {
         "empresa": empresa.nome,
         "setor": empresa.setor,
-        "rating_credito": analise.rating,
-        "capacidade_endividamento": analise.capacidade_endividamento
+        "capacidade_endividamento": capacidade,
+        "rating_credito": rating.nota,
+        "justificativa_rating": rating.justificativa,
+        "perfil_credito": perfil.classificacao,
+        "justificativa_perfil": perfil.justificativa
     }
