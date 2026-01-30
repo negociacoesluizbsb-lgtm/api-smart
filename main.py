@@ -81,3 +81,36 @@ def relatorio_credito_html():
 @app.get("/api/status")
 def status_api():
     return {"status": "online", "mensagem": "Plataforma de Crédito Empresarial ativa"}
+
+from fastapi import UploadFile, File
+
+# ==========================
+# PÁGINA DE LOGIN
+# ==========================
+@app.get("/login", response_class=HTMLResponse)
+def pagina_login(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
+
+# ==========================
+# PÁGINA DE UPLOAD
+# ==========================
+@app.get("/upload", response_class=HTMLResponse)
+def pagina_upload(request: Request):
+    return templates.TemplateResponse(
+        "upload.html",
+        {"request": request}
+    )
+
+# ==========================
+# RECEBER DOCUMENTOS
+# ==========================
+@app.post("/upload")
+async def receber_documento(documento: UploadFile = File(...)):
+    return {
+        "status": "ok",
+        "arquivo_recebido": documento.filename
+    }
+
