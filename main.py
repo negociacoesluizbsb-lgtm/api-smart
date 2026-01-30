@@ -15,7 +15,7 @@ app = FastAPI(
 # ==========================
 # CONFIGURAÇÃO DE TEMPLATES
 # ==========================
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="API/templates")
 
 
 # ==========================
