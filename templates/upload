@@ -1,65 +1,19 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Upload de Documentos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 40px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            margin-top: 0;
-        }
-        input[type="file"] {
-            margin: 20px 0;
-            width: 100%;
-        }
-        button {
-            background-color: #2563eb;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        button:hover {
-            background-color: #1e40af;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            color: #2563eb;
-            text-decoration: none;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Envio de Documentos</h2>
+    <h1>Upload de Documentos</h1>
 
-        <p>
-            Faça o upload dos documentos fiscais e financeiros da empresa
-            para análise automática.
-        </p>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="arquivo" required>
+        <br><br>
+        <button type="submit">Enviar</button>
+    </form>
 
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="documento" required>
-            <button type="submit">Enviar Documento</button>
-        </form>
-
-        <a href="/">← Voltar para a plataforma</a>
-    </div>
+    <br>
+    <a href="/">Voltar</a>
 </body>
 </html>
